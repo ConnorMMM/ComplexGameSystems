@@ -6,6 +6,7 @@ using UnityEngine;
 public class Recorder : MonoBehaviour
 {
     public MemoryStream recordingStream { get; private set; }
+
     private Transform m_transform;
     private Vector3 m_PositionPrevFrame;
     private Vector3 m_RotationPrevFrame;
@@ -24,7 +25,7 @@ public class Recorder : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(recording)
+        if (recording)
         {
             UpdateRecording();
         }
@@ -39,18 +40,20 @@ public class Recorder : MonoBehaviour
         SaveTransform();
     }
 
+    private void InitializeRecording()
+    {
+        memoryStream = new MemoryStream();
+        binaryWriter = new BinaryWriter(memoryStream);
+        recordingInitialized = true;
+    }
+
     public void StartRecording()
     {
         if(!recordingInitialized)
-        {
-            memoryStream = new MemoryStream();
-            binaryWriter = new BinaryWriter(memoryStream);
-            recordingInitialized = true;
-        }
+            InitializeRecording();
         else
-        {
             memoryStream.SetLength(0);
-        }
+
         ResetReplayFrame();
         recording = true;
     }
@@ -71,6 +74,7 @@ public class Recorder : MonoBehaviour
         if(m_PositionPrevFrame == transform.position)
         {
             binaryWriter.Write(false);
+            Debug.Log("Recording: Empty");
         }
         else
         {
@@ -78,6 +82,15 @@ public class Recorder : MonoBehaviour
             binaryWriter.Write(m_PositionPrevFrame.x - m_transform.position.x);
             binaryWriter.Write(m_PositionPrevFrame.y - m_transform.position.y);
             binaryWriter.Write(m_PositionPrevFrame.z - m_transform.position.z);
+            Debug.Log($"Recording: ({m_PositionPrevFrame.x - m_transform.position.x}, {m_PositionPrevFrame.y - m_transform.position.y}, {m_PositionPrevFrame.z - m_transform.position.z})");
         }
+    }
+
+    public MemoryStream GetMemoryStream()
+    {
+        MemoryStream tempStream = memoryStream;
+        StopRecording();
+        InitializeRecording();
+        return tempStream;
     }
 }
