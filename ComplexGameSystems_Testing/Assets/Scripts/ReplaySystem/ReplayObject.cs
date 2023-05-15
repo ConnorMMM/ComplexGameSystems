@@ -5,10 +5,17 @@ using UnityEngine;
 
 public class ReplayObject : MonoBehaviour
 {
-    private MemoryStream memoryStream = null;
-    private BinaryReader binaryReader = null;
+    private MemoryStream m_memoryStream = null;
+    private BinaryReader m_binaryReader = null;
 
-    private bool replaying;
+    private MemoryStreamSettings m_settings;
+
+    private bool replaying = false;
+
+    private void OnDestroy()
+    {
+        ClearMemory();
+    }
 
     private void FixedUpdate()
     {
@@ -18,35 +25,52 @@ public class ReplayObject : MonoBehaviour
 
     private void UpdateReplay()
     {
-        if (memoryStream.Position >= memoryStream.Length)
+        if (m_memoryStream.Position >= m_memoryStream.Length)
         {
-            StopReplaying();
+            PauseReplay();
             return;
         }
 
-        ReadTransform();
+        if (m_settings.UsePosition()) ApplyReplayPosition();
+        if (m_settings.UseRotation()) ApplyReplayRotation();
+        if (m_settings.UseScale()) ApplyReplayScale();
     }
 
-    public void StartReplay()
+    public void InitializeReplayObject(MemoryStream _memoryStream, MemoryStreamSettings _settings, int _number)
     {
-        if(memoryStream == null)
+        gameObject.name = "ReplayObject_" +  _number.ToString();
+        m_settings = _settings;
+        m_memoryStream = _memoryStream;
+        m_binaryReader = new BinaryReader(_memoryStream);
+        ResetReplay();
+        SetVisibility(false);
+        replaying = false;
+    }
+
+    public bool RestartReplay()
+    {
+        if (m_memoryStream == null)
+        {
+            Debug.Log($"MemoryStream is not set for {gameObject}");
+            return false;
+        }
+
+        ResetReplay();
+        SetVisibility(true);
+        replaying = true;
+
+        return true;
+    }
+
+    public void PlayReplay()
+    {
+        if(m_memoryStream == null)
         {
             Debug.Log($"MemoryStream is not set for {gameObject}");
             return;
         }
 
-        ResetReplayFrame();
-        replaying = true;
-    }
-
-    public void StopReplaying()
-    {
-        replaying = false;
-        Debug.Log("Stopped Replaying");
-    }
-
-    public void PlayReplay()
-    {
+        SetVisibility(true);
         replaying = true;
     }
 
@@ -55,31 +79,91 @@ public class ReplayObject : MonoBehaviour
         replaying = false;
     }
 
-    private void ResetReplayFrame()
+    public void StopReplay()
     {
-        memoryStream.Seek(0, SeekOrigin.Begin);
+        SetVisibility(false);
+        replaying = false;
     }
 
-    private void ReadTransform()
+    public void ClearMemory()
     {
-        if(binaryReader.ReadBoolean())
+        m_memoryStream.Dispose();
+        m_binaryReader.Dispose();
+    }
+
+    private void SetVisibility(bool _state)
+    {
+        gameObject.SetActive(_state);
+    }
+
+    private void ResetReplay()
+    {
+        m_memoryStream.Seek(0, SeekOrigin.Begin);
+        ApplyInitialFrame();
+    }
+
+
+    protected void ApplyInitialFrame()
+    {
+        if (m_settings.UsePosition())
         {
-            float x = binaryReader.ReadSingle();
-            float y = binaryReader.ReadSingle();
-            float z = binaryReader.ReadSingle();
-            Debug.Log($"x: {x}, y: {y}, z: {z}");
-            gameObject.transform.position = new Vector3(x, y, z);
+            float x = m_binaryReader.ReadSingle();
+            float y = m_binaryReader.ReadSingle();
+            float z = m_binaryReader.ReadSingle();
+            transform.position = new Vector3(x, y, z);
         }
-        else
+        if (m_settings.UseRotation())
         {
-            Debug.Log("Empty");
+            float x = m_binaryReader.ReadSingle();
+            float y = m_binaryReader.ReadSingle();
+            float z = m_binaryReader.ReadSingle();
+            transform.rotation = new Quaternion(x, y, z, 0);
+        }
+        if (m_settings.UseScale())
+        {
+            float x = m_binaryReader.ReadSingle();
+            float y = m_binaryReader.ReadSingle();
+            float z = m_binaryReader.ReadSingle();
+            transform.localScale = new Vector3(x, y, z);
         }
     }
 
-    public void SetMemoryStream(MemoryStream _memoryStream)
+    protected void ApplyReplayPosition()
     {
-        memoryStream = _memoryStream;
-        binaryReader = new BinaryReader(memoryStream);
-        ResetReplayFrame();
+        Debug.Log("Applying Position");
+        if (m_binaryReader.ReadBoolean())
+        {
+            Vector3 recPos;
+            recPos.x = m_binaryReader.ReadSingle();
+            recPos.y = m_binaryReader.ReadSingle();
+            recPos.z = m_binaryReader.ReadSingle();
+            transform.position += recPos;
+        }
+    }
+
+    protected void ApplyReplayRotation()
+    {
+        Debug.Log("Applying Rotation");
+        if (m_binaryReader.ReadBoolean())
+        {
+            Vector3 recRot;
+            recRot.x = m_binaryReader.ReadSingle();
+            recRot.y = m_binaryReader.ReadSingle();
+            recRot.z = m_binaryReader.ReadSingle();
+            transform.rotation = new Quaternion(transform.rotation.x + recRot.x, transform.rotation.y + recRot.y, transform.rotation.z + recRot.z, 0);
+        }
+    }
+
+    protected void ApplyReplayScale()
+    {
+        Debug.Log("Applying Scale");
+        if (m_binaryReader.ReadBoolean())
+        {
+            Vector3 recScale;
+            recScale.x = m_binaryReader.ReadSingle();
+            recScale.y = m_binaryReader.ReadSingle();
+            recScale.z = m_binaryReader.ReadSingle();
+            transform.localScale += recScale;
+        }
     }
 }
