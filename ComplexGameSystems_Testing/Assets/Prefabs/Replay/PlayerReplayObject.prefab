@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6445206281499354698}
   - component: {fileID: 6445206281499354697}
   - component: {fileID: 6445206281499354696}
+  - component: {fileID: -4161012729347114535}
   m_Layer: 0
   m_Name: PlayerReplayObject
   m_TagString: Untagged
@@ -83,3 +84,15 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-4161012729347114535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6445206281499354711}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad98a0e26ebbbc5469d885f253fdca42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

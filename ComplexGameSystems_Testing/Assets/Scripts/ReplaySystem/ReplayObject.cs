@@ -1,14 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class ReplayObject : MonoBehaviour
+public abstract class ReplayObject : MonoBehaviour
 {
     private MemoryStream m_memoryStream = null;
-    private BinaryReader m_binaryReader = null;
-
-    private MemoryStreamSettings m_settings;
+    protected BinaryReader m_binaryReader = null;
+    protected MemoryStreamSettings m_settings;
 
     private bool replaying = false;
 
@@ -20,25 +17,24 @@ public class ReplayObject : MonoBehaviour
     private void FixedUpdate()
     {
         if (replaying)
-            UpdateReplay();
-    }
-
-    private void UpdateReplay()
-    {
-        if (m_memoryStream.Position >= m_memoryStream.Length)
         {
-            PauseReplay();
-            return;
+            if (m_memoryStream.Position >= m_memoryStream.Length)
+            {
+                PauseReplay();
+                return;
+            }
+            UpdateReplay();
         }
-
-        if (m_settings.UsePosition()) ApplyReplayPosition();
-        if (m_settings.UseRotation()) ApplyReplayRotation();
-        if (m_settings.UseScale()) ApplyReplayScale();
     }
 
-    public void InitializeReplayObject(MemoryStream _memoryStream, MemoryStreamSettings _settings, int _number)
+    protected abstract void UpdateReplay();
+
+    protected abstract void ApplyInitialFrame();
+
+
+    public void InitializeReplayObject(MemoryStream _memoryStream, MemoryStreamSettings _settings, string _name)
     {
-        gameObject.name = "ReplayObject_" +  _number.ToString();
+        gameObject.name = _name;
         m_settings = _settings;
         m_memoryStream = _memoryStream;
         m_binaryReader = new BinaryReader(_memoryStream);
@@ -83,9 +79,11 @@ public class ReplayObject : MonoBehaviour
     {
         SetVisibility(false);
         replaying = false;
+        ResetReplay();
     }
 
-    public void ClearMemory()
+
+    private void ClearMemory()
     {
         m_memoryStream.Dispose();
         m_binaryReader.Dispose();
@@ -103,67 +101,55 @@ public class ReplayObject : MonoBehaviour
     }
 
 
-    protected void ApplyInitialFrame()
+    protected Vector3 ReadVector3()
     {
-        if (m_settings.UsePosition())
-        {
-            float x = m_binaryReader.ReadSingle();
-            float y = m_binaryReader.ReadSingle();
-            float z = m_binaryReader.ReadSingle();
-            transform.position = new Vector3(x, y, z);
-        }
-        if (m_settings.UseRotation())
-        {
-            float x = m_binaryReader.ReadSingle();
-            float y = m_binaryReader.ReadSingle();
-            float z = m_binaryReader.ReadSingle();
-            transform.rotation = new Quaternion(x, y, z, 0);
-        }
-        if (m_settings.UseScale())
-        {
-            float x = m_binaryReader.ReadSingle();
-            float y = m_binaryReader.ReadSingle();
-            float z = m_binaryReader.ReadSingle();
-            transform.localScale = new Vector3(x, y, z);
-        }
+        Vector3 vec3;
+        vec3.x = m_binaryReader.ReadSingle();
+        vec3.y = m_binaryReader.ReadSingle();
+        vec3.z = m_binaryReader.ReadSingle();
+        return vec3;
+    }
+
+    protected bool ReadBool()
+    {
+        return m_binaryReader.ReadBoolean();
     }
 
     protected void ApplyReplayPosition()
     {
-        Debug.Log("Applying Position");
         if (m_binaryReader.ReadBoolean())
-        {
-            Vector3 recPos;
-            recPos.x = m_binaryReader.ReadSingle();
-            recPos.y = m_binaryReader.ReadSingle();
-            recPos.z = m_binaryReader.ReadSingle();
-            transform.position += recPos;
-        }
+            transform.position += ReadVector3();
+    }
+    protected void ApplyReplayPosition(Transform _transform)
+    {
+        if (m_binaryReader.ReadBoolean())
+            _transform.position += ReadVector3();
     }
 
     protected void ApplyReplayRotation()
     {
-        Debug.Log("Applying Rotation");
         if (m_binaryReader.ReadBoolean())
-        {
-            Vector3 recRot;
-            recRot.x = m_binaryReader.ReadSingle();
-            recRot.y = m_binaryReader.ReadSingle();
-            recRot.z = m_binaryReader.ReadSingle();
-            transform.rotation = new Quaternion(transform.rotation.x + recRot.x, transform.rotation.y + recRot.y, transform.rotation.z + recRot.z, 0);
-        }
+            transform.eulerAngles += ReadVector3();
+    }
+    protected void ApplyReplayRotation(Transform _transform)
+    {
+        if (m_binaryReader.ReadBoolean())
+            _transform.eulerAngles += ReadVector3();
+    }
+    protected void ApplyReplayLocalRotation(Transform _transform)
+    {
+        if (m_binaryReader.ReadBoolean())
+            _transform.localEulerAngles += ReadVector3();
     }
 
     protected void ApplyReplayScale()
     {
-        Debug.Log("Applying Scale");
         if (m_binaryReader.ReadBoolean())
-        {
-            Vector3 recScale;
-            recScale.x = m_binaryReader.ReadSingle();
-            recScale.y = m_binaryReader.ReadSingle();
-            recScale.z = m_binaryReader.ReadSingle();
-            transform.localScale += recScale;
-        }
+            transform.localScale += ReadVector3();
+    }
+    protected void ApplyReplayScale(Transform _transform)
+    {
+        if (m_binaryReader.ReadBoolean())
+            _transform.localScale += ReadVector3();
     }
 }
