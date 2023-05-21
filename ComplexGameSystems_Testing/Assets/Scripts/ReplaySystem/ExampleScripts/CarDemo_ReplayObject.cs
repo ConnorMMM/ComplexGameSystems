@@ -23,34 +23,27 @@ public class CarDemo_ReplayObject : ReplayObject
 
     protected override void ApplyInitialFrame()
     {
-        frontLeftMesh.transform.localEulerAngles = ReadVector3();
+        frontLeftMesh.transform.localEulerAngles  = ReadVector3();
         frontRightMesh.transform.localEulerAngles = ReadVector3();
-        rearLeftMesh.transform.localEulerAngles = ReadVector3();
-        rearRightMesh.transform.localEulerAngles = ReadVector3();
+        rearLeftMesh.transform.localEulerAngles   = ReadVector3();
+        rearRightMesh.transform.localEulerAngles  = ReadVector3();
 
-        if (ReadBool())
-            RLWParticleSystem.Play();
-        else
-            RLWParticleSystem.Stop();
-
-        if (ReadBool())
-            RRWParticleSystem.Play();
-        else
-            RRWParticleSystem.Stop();
+        if (ReadBool()) RLWParticleSystem.Play();
+        if (ReadBool()) RRWParticleSystem.Play();
 
         RLWTireSkid.emitting = ReadBool();
         RRWTireSkid.emitting = ReadBool();
 
-        transform.position = ReadVector3();
+        transform.position    = ReadVector3();
         transform.eulerAngles = ReadVector3();
     }
 
     protected override void UpdateReplay()
     {
-        ApplyReplayLocalRotation(frontLeftMesh.transform);
-        ApplyReplayLocalRotation(frontRightMesh.transform);
-        ApplyReplayLocalRotation(rearLeftMesh.transform);
-        ApplyReplayLocalRotation(rearRightMesh.transform);
+        frontLeftMesh.transform.localEulerAngles  += RetrieveVector3();
+        frontRightMesh.transform.localEulerAngles += RetrieveVector3();
+        rearLeftMesh.transform.localEulerAngles   += RetrieveVector3();
+        rearRightMesh.transform.localEulerAngles  += RetrieveVector3();
 
         if (ReadBool())
             RLWParticleSystem.Play();
@@ -65,7 +58,7 @@ public class CarDemo_ReplayObject : ReplayObject
         RLWTireSkid.emitting = ReadBool();
         RRWTireSkid.emitting = ReadBool();
 
-        ApplyReplayPosition(transform);
-        ApplyReplayRotation(transform);
+        transform.position    += RetrieveVector3();
+        transform.eulerAngles += RetrieveVector3();
     }
 }

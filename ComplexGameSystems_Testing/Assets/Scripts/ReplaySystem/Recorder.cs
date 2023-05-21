@@ -73,6 +73,17 @@ public abstract class Recorder : MonoBehaviour
     }
 
 
+    protected void SaveBool(bool _data)
+    {
+        m_binaryWriter.Write(_data);
+    }
+
+    protected void SaveVector2(Vector2 _data)
+    {
+        m_binaryWriter.Write(_data.x);
+        m_binaryWriter.Write(_data.y);
+    }
+
     protected void SaveVector3(Vector3 _data)
     {
         m_binaryWriter.Write(_data.x);
@@ -80,17 +91,21 @@ public abstract class Recorder : MonoBehaviour
         m_binaryWriter.Write(_data.z);
     }
 
-    protected void SaveBool(bool _data)
+    protected void CheckVector2Diff(Vector2 _cur, Vector2 _prev)
     {
-        m_binaryWriter.Write(_data);
+        if (_prev == _cur)
+            m_binaryWriter.Write(false);
+        else
+        {
+            m_binaryWriter.Write(true);
+            SaveVector2(_cur - _prev);
+        }
     }
 
     protected void CheckVector3Diff(Vector3 _cur, Vector3 _prev)
     {
         if (_prev == _cur)
-        {
             m_binaryWriter.Write(false);
-        }
         else
         {
             m_binaryWriter.Write(true);

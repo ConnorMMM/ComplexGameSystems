@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Restart Replay
+  m_text: Stop Replay
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30.25
+  m_fontSize: 32.4
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -668,34 +668,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6149235166712988535}
-        m_TargetAssemblyTypeName: RecordingManager, Assembly-CSharp
-        m_MethodName: FinishRecording
+      - m_Target: {fileID: 3505220453462860778}
+        m_TargetAssemblyTypeName: ReplaySystem_UIManager, Assembly-CSharp
+        m_MethodName: OnFinishRecordingClick
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6149235166259456370}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 6149235165706900914}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -826,9 +802,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6149235166712988535}
-        m_TargetAssemblyTypeName: RecordingManager, Assembly-CSharp
-        m_MethodName: DeleteAllReplays
+      - m_Target: {fileID: 3505220453462860778}
+        m_TargetAssemblyTypeName: ReplaySystem_UIManager, Assembly-CSharp
+        m_MethodName: OnDestroyAllClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -960,34 +936,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6149235166712988535}
-        m_TargetAssemblyTypeName: RecordingManager, Assembly-CSharp
-        m_MethodName: StartRecording
+      - m_Target: {fileID: 3505220453462860778}
+        m_TargetAssemblyTypeName: ReplaySystem_UIManager, Assembly-CSharp
+        m_MethodName: OnRecordClick
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6149235165706900914}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 6149235166259456370}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1009,7 +961,7 @@ GameObject:
   - component: {fileID: 6149235166452431805}
   - component: {fileID: 6149235166452431806}
   m_Layer: 5
-  m_Name: Button - Restart Replay
+  m_Name: Button - Stop Replay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1029,7 +981,7 @@ RectTransform:
   m_Children:
   - {fileID: 6149235165285920940}
   m_Father: {fileID: 6149235166712988521}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1118,9 +1070,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6149235166712988535}
-        m_TargetAssemblyTypeName: RecordingManager, Assembly-CSharp
-        m_MethodName: RestartReplay
+      - m_Target: {fileID: 3505220453462860778}
+        m_TargetAssemblyTypeName: ReplaySystem_UIManager, Assembly-CSharp
+        m_MethodName: OnStopClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1129,30 +1081,6 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6149235167223858387}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6149235167083683855}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
         m_CallState: 2
 --- !u!1 &6149235166712988522
 GameObject:
@@ -1164,7 +1092,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6149235166712988521}
   - component: {fileID: 6149235166712988520}
-  - component: {fileID: 6149235166712988535}
+  - component: {fileID: 3505220453462860778}
   m_Layer: 5
   m_Name: RecordingManagmentUI
   m_TagString: Untagged
@@ -1186,9 +1114,9 @@ RectTransform:
   m_Children:
   - {fileID: 6149235166259456369}
   - {fileID: 6149235165706900913}
-  - {fileID: 6149235166452431807}
   - {fileID: 6149235167223858386}
   - {fileID: 6149235167083683854}
+  - {fileID: 6149235166452431807}
   - {fileID: 6149235166036296082}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -1224,7 +1152,7 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &6149235166712988535
+--- !u!114 &3505220453462860778
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1233,12 +1161,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 6149235166712988522}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64346a09b38bbca44ba28475a0ea9153, type: 3}
+  m_Script: {fileID: 11500000, guid: e722d47ad34328b4e877a48be6e5ce5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_recorder: {fileID: 0}
-  m_replayObjectPrefab: {fileID: 0}
-  m_numOfReplays: 1
+  m_recordingManager: {fileID: 0}
+  m_recordButton: {fileID: 6149235166259456370}
+  m_finishRecordingButton: {fileID: 6149235165706900914}
+  m_playReplayButton: {fileID: 6149235167223858387}
+  m_pauseReplayButton: {fileID: 6149235167083683855}
+  m_stopReplayButton: {fileID: 6149235166452431792}
+  m_destroyAllButton: {fileID: 6149235166036296083}
 --- !u!1 &6149235166899338590
 GameObject:
   m_ObjectHideFlags: 0
@@ -1408,7 +1340,7 @@ RectTransform:
   m_Children:
   - {fileID: 6149235167371791383}
   m_Father: {fileID: 6149235166712988521}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -1497,34 +1429,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6149235166712988535}
-        m_TargetAssemblyTypeName: RecordingManager, Assembly-CSharp
-        m_MethodName: PauseReplay
+      - m_Target: {fileID: 3505220453462860778}
+        m_TargetAssemblyTypeName: ReplaySystem_UIManager, Assembly-CSharp
+        m_MethodName: OnPauseReplayClick
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6149235167223858387}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 6149235167083683855}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1566,7 +1474,7 @@ RectTransform:
   m_Children:
   - {fileID: 6149235166899338589}
   m_Father: {fileID: 6149235166712988521}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1655,34 +1563,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6149235166712988535}
-        m_TargetAssemblyTypeName: RecordingManager, Assembly-CSharp
-        m_MethodName: PlayReplay
+      - m_Target: {fileID: 3505220453462860778}
+        m_TargetAssemblyTypeName: ReplaySystem_UIManager, Assembly-CSharp
+        m_MethodName: OnPlayReplayClick
         m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 6149235167083683855}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-      - m_Target: {fileID: 6149235167223858387}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

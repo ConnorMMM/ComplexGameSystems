@@ -99,7 +99,20 @@ public abstract class ReplayObject : MonoBehaviour
         m_memoryStream.Seek(0, SeekOrigin.Begin);
         ApplyInitialFrame();
     }
+    
 
+    protected bool ReadBool()
+    {
+        return m_binaryReader.ReadBoolean();
+    }
+
+    protected Vector2 ReadVector2()
+    {
+        Vector2 vec2;
+        vec2.x = m_binaryReader.ReadSingle();
+        vec2.y = m_binaryReader.ReadSingle();
+        return vec2;
+    }
 
     protected Vector3 ReadVector3()
     {
@@ -110,46 +123,17 @@ public abstract class ReplayObject : MonoBehaviour
         return vec3;
     }
 
-    protected bool ReadBool()
+    protected Vector2 RetrieveVector2()
     {
-        return m_binaryReader.ReadBoolean();
+        if (m_binaryReader.ReadBoolean())
+            return ReadVector2();
+        return Vector2.zero;
     }
 
-    protected void ApplyReplayPosition()
+    protected Vector3 RetrieveVector3()
     {
         if (m_binaryReader.ReadBoolean())
-            transform.position += ReadVector3();
-    }
-    protected void ApplyReplayPosition(Transform _transform)
-    {
-        if (m_binaryReader.ReadBoolean())
-            _transform.position += ReadVector3();
-    }
-
-    protected void ApplyReplayRotation()
-    {
-        if (m_binaryReader.ReadBoolean())
-            transform.eulerAngles += ReadVector3();
-    }
-    protected void ApplyReplayRotation(Transform _transform)
-    {
-        if (m_binaryReader.ReadBoolean())
-            _transform.eulerAngles += ReadVector3();
-    }
-    protected void ApplyReplayLocalRotation(Transform _transform)
-    {
-        if (m_binaryReader.ReadBoolean())
-            _transform.localEulerAngles += ReadVector3();
-    }
-
-    protected void ApplyReplayScale()
-    {
-        if (m_binaryReader.ReadBoolean())
-            transform.localScale += ReadVector3();
-    }
-    protected void ApplyReplayScale(Transform _transform)
-    {
-        if (m_binaryReader.ReadBoolean())
-            _transform.localScale += ReadVector3();
+            return ReadVector3();
+        return Vector3.zero;
     }
 }
