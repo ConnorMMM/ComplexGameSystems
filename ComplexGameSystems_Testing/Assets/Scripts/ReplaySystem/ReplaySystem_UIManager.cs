@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ReplaySystem_UIManager : MonoBehaviour
 {
     [Header("Recording Management")]
-    [SerializeField] private RecordingManager m_recordingManager;
+    [SerializeField] private RecordingManager[] m_recordingManagers;
 
     [Space(20)]
     [Header("Buttons")]
@@ -35,14 +35,16 @@ public class ReplaySystem_UIManager : MonoBehaviour
 
     public void OnRecordClick()
     {
-        m_recordingManager.StopReplay();
+        foreach(RecordingManager manager in m_recordingManagers)
+            manager.StopReplay();
 
         m_recordButton.SetActive(false);
         m_finishRecordingButton.SetActive(true);
 
         DisableReplayButtons();
 
-        m_recordingManager.StartRecording();
+        foreach (RecordingManager manager in m_recordingManagers)
+            manager.StartRecording();
     }
 
     public void OnFinishRecordingClick()
@@ -52,7 +54,8 @@ public class ReplaySystem_UIManager : MonoBehaviour
 
         ResetReplayButtons();
 
-        m_recordingManager.FinishRecording();
+        foreach (RecordingManager manager in m_recordingManagers)
+            manager.FinishRecording();
     }
 
     public void OnPlayReplayClick()
@@ -61,7 +64,8 @@ public class ReplaySystem_UIManager : MonoBehaviour
         m_pauseReplayButton.SetActive(true);
         m_stopReplay.interactable = true;
 
-        m_recordingManager.PlayReplay();
+        foreach (RecordingManager manager in m_recordingManagers)
+            manager.PlayReplay();
     }
 
     public void OnPauseReplayClick()
@@ -69,7 +73,8 @@ public class ReplaySystem_UIManager : MonoBehaviour
         m_pauseReplayButton.SetActive(false);
         m_playReplayButton.SetActive(true);
 
-        m_recordingManager.PauseReplay();
+        foreach (RecordingManager manager in m_recordingManagers)
+            manager.PauseReplay();
     }
 
     public void OnStopClick()
@@ -78,14 +83,16 @@ public class ReplaySystem_UIManager : MonoBehaviour
         m_playReplayButton.SetActive(true);
         m_pauseReplayButton.SetActive(false);
 
-        m_recordingManager.StopReplay();
+        foreach (RecordingManager manager in m_recordingManagers)
+            manager.StopReplay();
     }
 
     public void OnDestroyAllClick()
     {
         DisableReplayButtons();
 
-        m_recordingManager.DeleteAllReplays();
+        foreach (RecordingManager manager in m_recordingManagers)
+            manager.DeleteAllReplays();
     }
 
 

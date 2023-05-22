@@ -28,16 +28,21 @@ public abstract class ReplayObject : MonoBehaviour
     }
 
     protected abstract void UpdateReplay();
-
     protected abstract void ApplyInitialFrame();
 
+    protected virtual void InitializeObjects(GameObject[] _gameObjects) { }
 
-    public void InitializeReplayObject(MemoryStream _memoryStream, MemoryStreamSettings _settings, string _name)
+
+    public void InitializeReplay(GameObject[] _gameObjects, MemoryStream _memoryStream, MemoryStreamSettings _settings, string _name)
     {
-        gameObject.name = _name;
-        m_settings = _settings;
         m_memoryStream = _memoryStream;
         m_binaryReader = new BinaryReader(_memoryStream);
+        m_settings = _settings;
+        gameObject.name = _name;
+
+        if(_gameObjects.Length != 0)
+            InitializeObjects(_gameObjects);
+
         ResetReplay();
         SetVisibility(false);
         replaying = false;
@@ -89,17 +94,17 @@ public abstract class ReplayObject : MonoBehaviour
         m_binaryReader.Dispose();
     }
 
-    private void SetVisibility(bool _state)
-    {
-        gameObject.SetActive(_state);
-    }
 
-    private void ResetReplay()
+    protected void ResetReplay()
     {
         m_memoryStream.Seek(0, SeekOrigin.Begin);
         ApplyInitialFrame();
     }
-    
+
+    protected void SetVisibility(bool _state)
+    {
+        gameObject.SetActive(_state);
+    }
 
     protected bool ReadBool()
     {
