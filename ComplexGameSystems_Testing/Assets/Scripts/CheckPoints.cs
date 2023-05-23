@@ -4,11 +4,9 @@ using UnityEngine;
 
 public class CheckPoints : MonoBehaviour
 {
-    [SerializeField] private CarGameManager m_carGameManager;
-
     private bool m_finishPoint;
 
-    void Start()
+    private void Start()
     {
         if(gameObject.tag == "FinishPoint")
             m_finishPoint = true;
@@ -16,7 +14,7 @@ public class CheckPoints : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        m_carGameManager.OnCheckPointTrigger(m_finishPoint);
+       CarGameManager.Instance.OnCheckPointTrigger(m_finishPoint);
     }
 
 }

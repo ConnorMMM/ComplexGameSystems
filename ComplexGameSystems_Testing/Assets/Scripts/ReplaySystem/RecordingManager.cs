@@ -78,6 +78,13 @@ public abstract class RecordingManager : MonoBehaviour
         m_replayCount = 0;
     }
 
+    public bool HasReplayObjects()
+    {
+        if(m_replayCount == 0)
+            return false;
+        return true;
+    }
+
 
     private void AddReplayObject()
     {

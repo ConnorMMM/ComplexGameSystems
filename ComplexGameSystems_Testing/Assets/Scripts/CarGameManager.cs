@@ -1,38 +1,41 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class CarGameManager : MonoBehaviour
+public class CarGameManager : Singleton<CarGameManager>
 {
+    [SerializeField] private ThirdPersonCar m_followCamera;
+    [SerializeField] private PrometeoCarController m_carController;
+
     [SerializeField] private Canvas m_mainMenu;
+    [SerializeField] private Canvas m_UICanvas;
     [SerializeField] private CarGameUI m_inGameUI;
 
-    [SerializeField] private PrometeoCarController m_carController;
 
     [SerializeField] private RecordingManager m_recordingManager;
 
-    private int m_checkPointPassed = 0;
-    private int m_maxCheckPoints = 0;
-
-    void Start()
+    private void Start()
     {
         m_carController.enabled = false;
 
-        GameObject[] checkPoints = GameObject.FindGameObjectsWithTag("CheckPoint");
-        m_maxCheckPoints = checkPoints.Length;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        m_mainMenu.enabled = true;
+        m_UICanvas.enabled = false;
     }
 
     public void OnStartPress()
     {
-        m_carController.enabled = true;
         m_mainMenu.enabled = false;
-        m_recordingManager.StartRecording();
+        m_UICanvas.enabled = true;
+
+        m_followCamera.SetFollowTarget(m_carController.gameObject.transform);
+        m_inGameUI.StartCountDown();
+    }
+
+    public void OnRestartPress()
+    {
+        m_followCamera.SetFollowTarget(m_carController.gameObject.transform);
+        m_inGameUI.StartCountDown();
     }
 
     public void OnQuitPress()
@@ -46,21 +49,21 @@ public class CarGameManager : MonoBehaviour
 
     public void OnCheckPointTrigger(bool _finishPoint)
     {
-        if(_finishPoint)
-        {
-            if(m_checkPointPassed == m_maxCheckPoints)
-            {
-                m_recordingManager.FinishRecording();
-                m_recordingManager.PlayReplay();
+        m_inGameUI.CheckPointHit(_finishPoint);
+    }
 
-                // TODO: Put code for finishing
-                // Menu swaping
-            }
-            return;
-        }
+    public void FinishedLinePassed(float _finishTime)
+    {
+        m_recordingManager.FinishRecording();
+        Debug.Log("Finished :" + _finishTime.ToString());
+        // TODO: Put code for finishing
+        // Menu swaping
+        m_followCamera.SetFollowTarget(null);
+    }
 
-        m_checkPointPassed++;
-
-        Debug.Log("CheckPoint");
+    public void StartRace()
+    {
+        m_carController.enabled = true;
+        m_recordingManager.StartRecording();
     }
 }
