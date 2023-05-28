@@ -28,22 +28,15 @@ public class CarGameUI : MonoBehaviour
     {
         GameObject[] checkPoints = GameObject.FindGameObjectsWithTag("CheckPoint");
         m_maxCheckPoints = checkPoints.Length;
-        m_checkPointsCounterText.text = "0/" + m_maxCheckPoints.ToString();
-        m_lapCounterText.text = "Lap 1 of " + m_numberOfLaps.ToString();
 
-        m_timerText.enabled = false;
-        m_checkPointsCounterText.enabled = false;
-        m_lapCounterText.enabled = false;
-        m_countDownText.enabled = false;
-
-        m_finishScreen.SetActive(false);
+        ResetRace();
     }
 
     private void FixedUpdate()
     {
         if(countDown)
         {
-            if(countDownTimer <= -0.5f)
+            if(countDownTimer <= -0.75f)
             {
                 countDown = false;
                 m_countDownText.enabled = false;
@@ -55,9 +48,7 @@ public class CarGameUI : MonoBehaviour
                 {
                     CarGameManager.Instance.StartRace();
                     m_countDownText.text = "GO";
-                    m_timerText.enabled = true;
-                    m_checkPointsCounterText.enabled = true;
-                    m_lapCounterText.enabled = true;
+                    SetInRaceUI(true);
                     isRacing = true;
                 }
             }
@@ -70,32 +61,17 @@ public class CarGameUI : MonoBehaviour
         if(isRacing)
         {
             timer += Time.deltaTime;
-
-            m_timerText.text = "";
-            int mineuts = (int)timer / 60;
-            if (mineuts < 10)
-                m_timerText.text += "0" + mineuts.ToString();
-            else
-                m_timerText.text += mineuts.ToString();
-
-            m_timerText.text += ":";
-
-            int seconds = (int)timer % 60;
-            if (seconds < 10)
-                m_timerText.text += "0" + seconds.ToString();
-            else
-                m_timerText.text += seconds.ToString();
+            m_timerText.text = GetTimeDisplay(timer);
         }
     }
 
     public void StartCountDown()
     {
-        countDownTimer = 2.99f;
-        m_countDownText.text = ((int)countDownTimer).ToString();
+        ResetRace();
+
+        m_countDownText.text = (Mathf.FloorToInt(countDownTimer + 1)).ToString();
         m_countDownText.enabled = true;
         countDown = true;
-
-        m_finishScreen.SetActive(false);
     }
 
     public void CheckPointHit(bool _finish)
@@ -107,9 +83,7 @@ public class CarGameUI : MonoBehaviour
                 if(m_lapsCompleted == m_numberOfLaps)
                 {
                     isRacing = false;
-                    m_timerText.enabled = false;
-                    m_checkPointsCounterText.enabled = false;
-                    m_lapCounterText.enabled = false;
+                    SetInRaceUI(false);
 
                     m_finishScreen.SetActive(true);
                     m_finishTimeText.text = m_timerText.text;
@@ -135,5 +109,54 @@ public class CarGameUI : MonoBehaviour
     public float GetFinishTime()
     {
         return timer;
+    }
+
+    private void SetInRaceUI(bool _state)
+    {
+        if(_state && !m_timerText.enabled)
+        {
+            m_checkPointsCounterText.text = "0/" + m_maxCheckPoints.ToString();
+            m_lapCounterText.text = "Lap 1 of " + m_numberOfLaps.ToString();
+        }
+        m_timerText.enabled = _state;
+        m_checkPointsCounterText.enabled = _state;
+        m_lapCounterText.enabled = _state;
+    }
+
+    private string GetTimeDisplay(float _time)
+    {
+        string output = "";
+
+        int minutes = (int)_time / 60;
+        if (minutes < 10)
+            output += "0" + minutes.ToString();
+        else
+            output += minutes.ToString();
+
+        output += ":";
+
+        int seconds = (int)_time % 60;
+        if (seconds < 10)
+            output += "0" + seconds.ToString();
+        else
+            output += seconds.ToString();
+
+        return output;
+    }
+
+    private void ResetRace()
+    {
+        isRacing = false;
+        countDown = false;
+
+        timer = 0;
+        countDownTimer = 2.99f;
+
+        m_lapsCompleted = 1;
+        m_checkPointPassed = 0;
+
+        m_countDownText.enabled = false;
+        SetInRaceUI(false);
+        m_finishScreen.SetActive(false);
     }
 }

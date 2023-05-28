@@ -8,17 +8,16 @@ public abstract class RecordingManager : MonoBehaviour
     [SerializeField, Range(1, 10)] private int m_numOfReplays = 1;
 
     // Replay Managers
-    protected List<ReplayObject> m_replayObjects;
+    [SerializeField] protected List<ReplayObject> m_replayObjects;
     protected MemoryStreamSettings m_settings;
 
-    private int m_replayCount = 0;
+    public int m_replayCount { get; private set; }
     protected int m_replayTotalCount = 0;
-
-    private string m_gameObjectName = "";
 
     protected virtual void Awake()
     {
         m_replayObjects = new List<ReplayObject>(m_numOfReplays);
+        m_replayCount = 0;
     }
 
     protected abstract void InitializeReplay();
@@ -53,6 +52,11 @@ public abstract class RecordingManager : MonoBehaviour
         }
     }
 
+    public void PlayReplay(int _index)
+    {
+        m_replayObjects[_index].PlayReplay();
+    }
+
     public void PauseReplay()
     {
         for (int i = 0; i < m_replayCount; i++)
@@ -76,6 +80,11 @@ public abstract class RecordingManager : MonoBehaviour
 
         m_replayObjects.Clear();
         m_replayCount = 0;
+    }
+
+    public Transform GetReplayTransform(int _index)
+    {
+        return m_replayObjects[_index].gameObject.transform;
     }
 
     public bool HasReplayObjects()

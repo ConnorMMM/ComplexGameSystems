@@ -12,12 +12,16 @@ public class CarGameManager : Singleton<CarGameManager>
     [SerializeField] private Canvas m_UICanvas;
     [SerializeField] private CarGameUI m_inGameUI;
 
-
     [SerializeField] private RecordingManager m_recordingManager;
+
+    private Vector3 m_startPosition;
+    private Vector3 m_startEularAngle;
 
     private void Start()
     {
-        m_carController.enabled = false;
+        m_carController.isUserControlOn = false;
+        m_startPosition = m_carController.gameObject.transform.position;
+        m_startEularAngle = m_carController.gameObject.transform.eulerAngles;
 
         m_mainMenu.enabled = true;
         m_UICanvas.enabled = false;
@@ -25,17 +29,34 @@ public class CarGameManager : Singleton<CarGameManager>
 
     public void OnStartPress()
     {
+        m_recordingManager.StopReplay();
+
         m_mainMenu.enabled = false;
         m_UICanvas.enabled = true;
 
-        m_followCamera.SetFollowTarget(m_carController.gameObject.transform);
+        m_carController.gameObject.transform.position = m_startPosition;
+        m_carController.gameObject.transform.eulerAngles = m_startEularAngle;
         m_inGameUI.StartCountDown();
     }
 
     public void OnRestartPress()
     {
-        m_followCamera.SetFollowTarget(m_carController.gameObject.transform);
+        m_recordingManager.StopReplay();
+
+        m_carController.gameObject.transform.position = m_startPosition;
+        m_carController.gameObject.transform.eulerAngles = m_startEularAngle;
         m_inGameUI.StartCountDown();
+    }
+
+    public void OnWatchReplayPress()
+    {
+        m_recordingManager.StopReplay();
+        m_carController.gameObject.SetActive(false);
+
+        int replayCount = m_recordingManager.m_replayCount;
+        m_recordingManager.RestartReplay(replayCount - 1);
+        m_followCamera.SetFollowTarget(m_recordingManager.GetReplayTransform(replayCount - 1));
+        
     }
 
     public void OnQuitPress()
@@ -55,15 +76,29 @@ public class CarGameManager : Singleton<CarGameManager>
     public void FinishedLinePassed(float _finishTime)
     {
         m_recordingManager.FinishRecording();
+        m_carController.isUserControlOn = false;
+        m_carController.Brakes();
         Debug.Log("Finished :" + _finishTime.ToString());
+
+
+
         // TODO: Put code for finishing
         // Menu swaping
-        m_followCamera.SetFollowTarget(null);
+        //m_followCamera.SetFollowTarget(null);
     }
 
     public void StartRace()
     {
-        m_carController.enabled = true;
+        m_carController.isUserControlOn = true;
         m_recordingManager.StartRecording();
+        if(m_recordingManager.HasReplayObjects())
+        {
+            m_recordingManager.RestartReplay();
+        }
+    }
+
+    private void ResetRace()
+    {
+
     }
 }
