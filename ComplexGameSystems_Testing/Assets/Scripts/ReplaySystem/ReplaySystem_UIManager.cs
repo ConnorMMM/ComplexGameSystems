@@ -36,7 +36,7 @@ public class ReplaySystem_UIManager : MonoBehaviour
     public void OnRecordClick()
     {
         foreach(RecordingManager manager in m_recordingManagers)
-            manager.StopReplay();
+            manager.StopReplays();
 
         m_recordButton.SetActive(false);
         m_finishRecordingButton.SetActive(true);
@@ -65,7 +65,7 @@ public class ReplaySystem_UIManager : MonoBehaviour
         m_stopReplay.interactable = true;
 
         foreach (RecordingManager manager in m_recordingManagers)
-            manager.PlayReplay();
+            manager.PlayReplays();
     }
 
     public void OnPauseReplayClick()
@@ -74,7 +74,7 @@ public class ReplaySystem_UIManager : MonoBehaviour
         m_playReplayButton.SetActive(true);
 
         foreach (RecordingManager manager in m_recordingManagers)
-            manager.PauseReplay();
+            manager.PauseReplays();
     }
 
     public void OnStopClick()
@@ -84,7 +84,7 @@ public class ReplaySystem_UIManager : MonoBehaviour
         m_pauseReplayButton.SetActive(false);
 
         foreach (RecordingManager manager in m_recordingManagers)
-            manager.StopReplay();
+            manager.StopReplays();
     }
 
     public void OnDestroyAllClick()
@@ -92,7 +92,7 @@ public class ReplaySystem_UIManager : MonoBehaviour
         DisableReplayButtons();
 
         foreach (RecordingManager manager in m_recordingManagers)
-            manager.DeleteAllReplays();
+            manager.DeleteReplays();
     }
 
 

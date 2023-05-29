@@ -36,20 +36,21 @@ public abstract class RecordingManager : MonoBehaviour
         m_recorder.StopRecording();
     }
 
-    public void RestartReplay()
+    public void RestartReplays()
     {
         for(int i = 0; i < m_replayCount; i++)
-        {
-            m_replayObjects[i].RestartReplay();
-        }
+            RestartReplay(i);
     }
 
-    public void PlayReplay()
+    public void RestartReplay(int _index)
+    {
+        m_replayObjects[_index].RestartReplay();
+    }
+
+    public void PlayReplays()
     {
         for (int i = 0; i < m_replayCount; i++)
-        {
-            m_replayObjects[i].PlayReplay();
-        }
+            PlayReplay(i);
     }
 
     public void PlayReplay(int _index)
@@ -57,23 +58,29 @@ public abstract class RecordingManager : MonoBehaviour
         m_replayObjects[_index].PlayReplay();
     }
 
-    public void PauseReplay()
+    public void PauseReplays()
     {
         for (int i = 0; i < m_replayCount; i++)
-        {
-            m_replayObjects[i].PauseReplay();
-        }
+            PauseReplay(i);
     }
 
-    public void StopReplay()
+    public void PauseReplay(int _index)
+    {
+        m_replayObjects[_index].PauseReplay();
+    }
+
+    public void StopReplays()
     {
         for (int i = 0; i < m_replayCount; i++)
-        {
             m_replayObjects[i].StopReplay();
-        }
     }
 
-    public void DeleteAllReplays()
+    public void StopReplay(int _index)
+    {
+        m_replayObjects[_index].StopReplay();
+    }
+
+    public void DeleteReplays()
     {
         for(int i = 0; i < m_replayCount; i++)
             Destroy(m_replayObjects[i].gameObject);
@@ -82,9 +89,21 @@ public abstract class RecordingManager : MonoBehaviour
         m_replayCount = 0;
     }
 
+    public void DeleteReplay(int _index)
+    {
+        Destroy(m_replayObjects[_index].gameObject);
+        m_replayObjects.RemoveAt(_index);
+        m_replayCount--;
+    }
+
     public Transform GetReplayTransform(int _index)
     {
         return m_replayObjects[_index].gameObject.transform;
+    }
+
+    public GameObject GetReplayObject(int _index)
+    {
+        return m_replayObjects[_index].gameObject;
     }
 
     public bool HasReplayObjects()
