@@ -29,7 +29,8 @@ public abstract class TagReplayObject : ReplayObject
             foreach (Collider c in replayObject.GetComponents<Collider>())
                 Destroy(c);
 
-            UpdateToGhost(replayObject);
+            foreach (Renderer r in replayObject.GetComponents<Renderer>())
+                r.material.color = new Color(r.material.color.r, r.material.color.g, r.material.color.b, .5f);
 
             m_gameObjects[i] = replayObject;
         }
@@ -38,6 +39,4 @@ public abstract class TagReplayObject : ReplayObject
     protected abstract void ApplyInitialFrameAt(int _index);
 
     protected abstract void UpdateReplayAt(int _index);
-
-    protected abstract void UpdateToGhost(GameObject _replayObject);
 }

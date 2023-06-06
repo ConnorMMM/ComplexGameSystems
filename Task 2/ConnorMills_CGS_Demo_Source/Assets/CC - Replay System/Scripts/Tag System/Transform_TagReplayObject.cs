@@ -17,10 +17,4 @@ public class Transform_TagReplayObject : TagReplayObject
         m_gameObjects[_index].transform.localEulerAngles += RetrieveVector3();
         m_gameObjects[_index].transform.localScale       += RetrieveVector3();
     }
-
-    protected override void UpdateToGhost(GameObject _replayObject)
-    {
-        foreach (Renderer r in _replayObject.GetComponents<Renderer>())
-            r.material.color = Color.cyan;
-    }
 }

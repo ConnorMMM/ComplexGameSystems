@@ -1,5 +1,7 @@
+using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public abstract class TagRecordingManager : RecordingManager
 {
@@ -21,9 +23,11 @@ public abstract class TagRecordingManager : RecordingManager
             return;
         }
         
-        TagRecorder temp = CreateRecorder();
-        temp.SetGameObjects(m_recorderObjects);
-        m_recorder = temp;
+        TagRecorder recorder = CreateRecorder();
+        if (recorder == null)
+            throw new ArgumentException("Incorrect Recorder assigned to manager");
+        recorder.SetGameObjects(m_recorderObjects);
+        m_recorder = recorder;
 
         base.Awake();
     }
@@ -31,6 +35,8 @@ public abstract class TagRecordingManager : RecordingManager
     protected override void InitializeReplay()
     {
         ReplayObject replayObject = CreateReplayObject();
+        if (replayObject == null)
+            throw new ArgumentException("Incorrect Replay Object assigned to manager");
         replayObject.InitializeReplay(m_recorderObjects, m_recorder.GetMemoryStream(), $"{gameObject.name}_ReplayObjectList_{m_replayTotalCount}");
         m_replayObjects.Add(replayObject);
     }
