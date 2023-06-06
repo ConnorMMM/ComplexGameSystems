@@ -135,7 +135,7 @@ public class CarGameManager : Singleton<CarGameManager>
             m_followCamera.SetFollowTarget(m_recordingManager.GetReplayTransform(m_watchReplayIndex));
         }
 
-        m_UIManager.StartCountDown();
+        m_UIManager.StartCountDown(m_recordingManager, m_followCamera, m_carController);
     }
 
     public void StartRace()
@@ -181,11 +181,6 @@ public class CarGameManager : Singleton<CarGameManager>
     public void RemoveLastReplay()
     {
         m_recordingManager.DeleteReplay(m_recordingManager.m_replayCount - 1);
-    }
-
-    public void OnCheckPointTrigger(bool _finishPoint)
-    {
-        m_UIManager.CheckPointHit(_finishPoint);
     }
 
     public string GetTimeDisplay(float _time)

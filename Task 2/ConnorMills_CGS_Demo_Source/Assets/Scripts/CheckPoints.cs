@@ -1,6 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CheckPoints : MonoBehaviour
 {
@@ -8,6 +7,8 @@ public class CheckPoints : MonoBehaviour
     private Material m_material;
 
     private bool m_finishPoint;
+
+    private UnityEvent<bool> m_OnHit = new UnityEvent<bool>();
 
     private void Awake()
     {
@@ -28,13 +29,12 @@ public class CheckPoints : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        CarGameManager.Instance.OnCheckPointTrigger(m_finishPoint);
-
-        if(!m_finishPoint)
+        if (!m_finishPoint)
         {
             m_collider.enabled = false;
             m_material.color = Color.green;
         }
+        m_OnHit.Invoke(m_finishPoint);
     }
 
     public void ResetCheckPoint()
@@ -44,5 +44,10 @@ public class CheckPoints : MonoBehaviour
             m_collider.enabled = true;
             m_material.color = Color.red;
         }
+    }
+
+    public UnityEvent<bool> OnHit()
+    {
+        return m_OnHit;
     }
 }

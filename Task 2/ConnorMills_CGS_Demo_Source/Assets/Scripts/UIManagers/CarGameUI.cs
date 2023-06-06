@@ -7,9 +7,13 @@ public class CarGameUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_checkPointsCounterText;
     [SerializeField] private TextMeshProUGUI m_lapCounterText;
     [SerializeField] private TextMeshProUGUI m_countDownText;
+    [SerializeField] private TextMeshProUGUI m_pauseText;
 
     [SerializeField, Range(1, 10)] private int m_numberOfLaps = 1;
 
+    private RecordingManager m_recordingManager;
+    private ThirdPersonCar m_followCamera;
+    private PrometeoCarController m_carController;
     private CheckPoints[] m_checkPoints;
 
     private int m_lapsCompleted;
@@ -22,6 +26,7 @@ public class CarGameUI : MonoBehaviour
     private float countDownTimer = 2.99f;
 
     private bool isRacing = false;
+    private bool isPaused = false;
 
     private void Start()
     {
@@ -30,9 +35,43 @@ public class CarGameUI : MonoBehaviour
 
         m_checkPoints = new CheckPoints[m_maxCheckPoints];
         for(int i = 0; i < m_maxCheckPoints; i++)
+        {
             m_checkPoints[i] = checkPoints[i].GetComponent<CheckPoints>();
+            m_checkPoints[i].OnHit().AddListener(CheckPointHit);
+        }
+        GameObject.FindGameObjectWithTag("FinishPoint").GetComponent<CheckPoints>().OnHit().AddListener(CheckPointHit);
 
         ResetUI();
+    }
+
+    private void Update()
+    {
+        if (isRacing)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                if (!isPaused)
+                {
+                    isPaused = true;
+                    m_carController.isUserControlOn = false;
+                    m_pauseText.enabled = true;
+                    m_recordingManager.PauseReplays();
+                    m_recordingManager.PauseRecording();
+                    m_followCamera.Paused(true);
+                    Time.timeScale = 0;
+                }
+                else
+                {
+                    isPaused = false;
+                    m_carController.isUserControlOn = true;
+                    m_pauseText.enabled = false;
+                    m_recordingManager.PlayReplays();
+                    m_recordingManager.ContinueRecording();
+                    m_followCamera.Paused(false);
+                    Time.timeScale = 1;
+                }
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -49,6 +88,7 @@ public class CarGameUI : MonoBehaviour
                 if(!isRacing)
                 {
                     CarGameManager.Instance.StartRace();
+                    m_carController.isUserControlOn = true;
                     SetUIElementState(true);
                     m_countDownText.text = "GO";
                     isRacing = true;
@@ -60,16 +100,25 @@ public class CarGameUI : MonoBehaviour
             countDownTimer -= Time.deltaTime;
         }
 
-        if(isRacing)
+        if(isRacing && !isPaused)
         {
             timer += Time.deltaTime;
-            m_timerText.text = GetTimeDisplay(timer);
+            m_timerText.text = CarGameManager.Instance.GetTimeDisplay(timer);
         }
     }
 
-    public void StartCountDown()
+    public void StartCountDown(RecordingManager _recordingManager, ThirdPersonCar _followCamera, PrometeoCarController _carController)
     {
         ResetUI();
+        m_recordingManager = _recordingManager;
+        if(m_recordingManager.HasReplays())
+        {
+            m_recordingManager.RestartReplays();
+            m_recordingManager.PauseReplays();
+        }
+        m_followCamera = _followCamera;
+        m_carController = _carController;
+        m_carController.isUserControlOn = false;
 
         m_countDownText.text = (Mathf.FloorToInt(countDownTimer + 1)).ToString();
         m_countDownText.enabled = true;
@@ -120,6 +169,7 @@ public class CarGameUI : MonoBehaviour
         foreach (CheckPoints checkPoint in m_checkPoints)
             checkPoint.ResetCheckPoint();
 
+        m_pauseText.enabled = false;
         SetUIElementState(false);
     }
 
@@ -134,33 +184,5 @@ public class CarGameUI : MonoBehaviour
         m_checkPointsCounterText.enabled = _state;
         m_lapCounterText.enabled = _state;
         m_countDownText.enabled = _state;
-    }
-
-    private string GetTimeDisplay(float _time)
-    {
-        string output = "";
-
-        // Minutes
-        int minutes = (int)_time / 60;
-        if (minutes < 10)
-            output += "0" + minutes.ToString();
-        else
-            output += minutes.ToString();
-
-        // Seconds
-        int seconds = (int)_time % 60;
-        if (seconds < 10)
-            output += ":0" + seconds.ToString();
-        else
-            output += ":" + seconds.ToString();
-
-        // Milliseconds
-        int milliseconds = (int)((_time - (int)_time) * 100);
-        if (milliseconds < 10)
-            output += ".0" + milliseconds.ToString();
-        else
-            output += "." + milliseconds.ToString();
-
-        return output;
     }
 }

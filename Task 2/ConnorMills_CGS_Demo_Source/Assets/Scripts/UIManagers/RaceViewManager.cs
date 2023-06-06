@@ -1,14 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RaceViewManager : MonoBehaviour
 {
     [SerializeField] private Transform m_birdsEyeView;
     [SerializeField] private TextMeshProUGUI m_timerText;
     [SerializeField] private TextMeshProUGUI m_countDownText;
-    [SerializeField] private TextMeshProUGUI m_PauseText;
+
+    [SerializeField] private GameObject m_PauseMenu;
+    [SerializeField] private Button m_continueButton;
+    [SerializeField] private Button m_ExitButton;
 
     private RecordingManager m_recordingManager;
     private ReplayObject[] m_replayObjects;
@@ -32,10 +34,13 @@ public class RaceViewManager : MonoBehaviour
         m_cameraViews = new Transform[1];
         m_cameraViews[0] = m_birdsEyeView;
 
+        m_continueButton.onClick.AddListener(OnContinueClick);
+        m_ExitButton.onClick.AddListener(OnExitClick);
+
         ResetUI();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
         if (isInScene)
         {
@@ -57,25 +62,17 @@ public class RaceViewManager : MonoBehaviour
 
                 m_thirdPersonCar.SetFollowTarget(m_cameraViews[m_currentViewIndex]);
             }
-            if (Input.GetKeyDown(KeyCode.Escape))
+
+            if (isRacing)
             {
-                if (!isPaused)
-                {
-                    isPaused = true;
-                    m_PauseText.enabled = true;
-                    m_recordingManager.PauseReplays();
-                    m_thirdPersonCar.Paused(true);
-                }
-                else
-                {
-                    isPaused = false;
-                    m_PauseText.enabled = false;
-                    m_recordingManager.PlayReplays();
-                    m_thirdPersonCar.Paused(false);
-                }
+                if (Input.GetKeyDown(KeyCode.Escape))
+                    TogglePaused();
             }
         }
+    }
 
+    private void FixedUpdate()
+    {
         if (countDown)
         {
             if (countDownTimer <= -0.75f)
@@ -153,7 +150,7 @@ public class RaceViewManager : MonoBehaviour
 
         m_timerText.enabled = false;
         m_countDownText.enabled = false;
-        m_PauseText.enabled = false;
+        m_PauseMenu.SetActive(false);
     }
 
     public void UpdateReplayObjects(RecordingManager _recordingManager)
@@ -170,5 +167,33 @@ public class RaceViewManager : MonoBehaviour
             m_replayObjects[i] = replayObjects[i].GetComponent<ReplayObject>();
             m_cameraViews[i + 1] = replayObjects[i].transform;
         }
+    }
+
+    private void TogglePaused()
+    {
+        if (!isPaused)
+        {
+            isPaused = true;
+            m_PauseMenu.SetActive(true);
+            m_recordingManager.PauseReplays();
+            m_thirdPersonCar.Paused(true);
+        }
+        else
+        {
+            isPaused = false;
+            m_PauseMenu.SetActive(false);
+            m_recordingManager.PlayReplays();
+            m_thirdPersonCar.Paused(false);
+        }
+    }
+
+    private void OnContinueClick()
+    {
+        TogglePaused();
+    }
+
+    private void OnExitClick()
+    {
+        Debug.Log("Exit");
     }
 }

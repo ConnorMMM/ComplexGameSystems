@@ -147,7 +147,7 @@ public abstract class RecordingManager : MonoBehaviour
     }
 
     /// <summary>  </summary>
-    public bool HasReplayObjects()
+    public bool HasReplays()
     {
         if(m_replayCount == 0)
             return false;
