@@ -44,13 +44,18 @@ public abstract class RecordingManager : MonoBehaviour
     /// Tells the recorder script to finish the recording.
     /// Creates a replay object and if the limit of replay objects are meet removes the first replay object in the list.
     /// </summary>
-    public void FinishRecording()
+    public void StopRecording()
     {
         if(m_replayCount == m_numOfReplays)
             RemoveReplayObject();
         AddReplayObject();
 
         m_recorder.StopRecording();
+    }
+
+    public void ClearRecording()
+    {
+        m_recorder.ClearRecording();
     }
 
     /// <summary>  </summary>

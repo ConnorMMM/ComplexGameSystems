@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,28 +9,24 @@ public class RaceViewManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI m_timerText;
     [SerializeField] private TextMeshProUGUI m_countDownText;
 
-    [SerializeField] private GameObject m_PauseMenu;
+    [SerializeField] private GameObject m_pauseMenu;
     [SerializeField] private Button m_continueButton;
     [SerializeField] private Button m_ExitButton;
 
     private RecordingManager m_recordingManager;
     private ReplayObject[] m_replayObjects;
-    private ThirdPersonCar m_thirdPersonCar;
+    private ThirdPersonCar m_followCamera;
 
     private Transform[] m_cameraViews;
     private int m_currentViewIndex;
 
     private float timer;
     private bool isRacing = false;
-    private bool isPaused = false;
     private bool isInScene = false;
 
-    private float countDownTimer = 2.99f;
-    private bool countDown = false;
-
-    void Awake()
+    private void Start()
     {
-        m_thirdPersonCar = Camera.main.GetComponent<ThirdPersonCar>();
+        m_followCamera = CarGameManager.Instance.FollowCamera();
 
         m_cameraViews = new Transform[1];
         m_cameraViews[0] = m_birdsEyeView;
@@ -37,7 +34,7 @@ public class RaceViewManager : MonoBehaviour
         m_continueButton.onClick.AddListener(OnContinueClick);
         m_ExitButton.onClick.AddListener(OnExitClick);
 
-        ResetUI();
+        ResetRace();
     }
 
     private void Update()
@@ -51,7 +48,7 @@ public class RaceViewManager : MonoBehaviour
                 else
                     m_currentViewIndex = m_cameraViews.Length - 1;
 
-                m_thirdPersonCar.SetFollowTarget(m_cameraViews[m_currentViewIndex]);
+                m_followCamera.SetFollowTarget(m_cameraViews[m_currentViewIndex]);
             }
             if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
             {
@@ -60,7 +57,7 @@ public class RaceViewManager : MonoBehaviour
                 else
                     m_currentViewIndex = 0;
 
-                m_thirdPersonCar.SetFollowTarget(m_cameraViews[m_currentViewIndex]);
+                m_followCamera.SetFollowTarget(m_cameraViews[m_currentViewIndex]);
             }
 
             if (isRacing)
@@ -73,30 +70,7 @@ public class RaceViewManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (countDown)
-        {
-            if (countDownTimer <= -0.75f)
-            {
-                countDown = false;
-                m_countDownText.enabled = false;
-            }
-            else if (countDownTimer <= 0)
-            {
-                if (!isRacing)
-                {
-                    m_timerText.enabled = true;
-                    m_countDownText.text = "RACE";
-                    isRacing = true;
-                    m_recordingManager.PlayReplays();
-                }
-            }
-            else
-                m_countDownText.text = (Mathf.FloorToInt(countDownTimer + 1)).ToString();
-
-            countDownTimer -= Time.deltaTime;
-        }
-
-        if (isRacing && !isPaused)
+        if (isRacing)
         {
             timer += Time.deltaTime;
             m_timerText.text = CarGameManager.Instance.GetTimeDisplay(timer);
@@ -121,36 +95,51 @@ public class RaceViewManager : MonoBehaviour
 
     public void StartCountDown()
     {
-        ResetUI();
+        ResetRace();
 
-        m_thirdPersonCar.SetFollowTarget(m_cameraViews[m_currentViewIndex]);
-
-        m_countDownText.text = (Mathf.FloorToInt(countDownTimer + 1)).ToString();
-        m_countDownText.enabled = true;
-        countDown = true;
+        m_followCamera.SetFollowTarget(m_cameraViews[m_currentViewIndex]);
         isInScene = true;
 
         m_recordingManager.RestartReplays();
         m_recordingManager.PauseReplays();
+
+        StartCoroutine(CountDown());
     }
 
-    public void ResetUI()
+    IEnumerator CountDown()
+    {
+        m_countDownText.text = "3";
+        m_countDownText.enabled = true;
+        yield return new WaitForSeconds(1f);
+
+        m_countDownText.text = "2";
+        yield return new WaitForSeconds(1f);
+
+        m_countDownText.text = "1";
+        yield return new WaitForSeconds(1f);
+
+        m_countDownText.text = "RACE";
+        m_timerText.enabled = true;
+        isRacing = true;
+        m_recordingManager.PlayReplays();
+        yield return new WaitForSeconds(.75f);
+
+        m_countDownText.enabled = false;
+    }
+
+    public void ResetRace()
     {
         m_currentViewIndex = 0;
 
         timer = 0;
         isRacing = false;
-        isPaused = false;
         isInScene = false;
-        countDownTimer = 2.99f;
-        countDown = false;
 
         m_timerText.text = "00:00.00";
-        m_countDownText.text = "3";
 
         m_timerText.enabled = false;
         m_countDownText.enabled = false;
-        m_PauseMenu.SetActive(false);
+        m_pauseMenu.SetActive(false);
     }
 
     public void UpdateReplayObjects(RecordingManager _recordingManager)
@@ -171,20 +160,8 @@ public class RaceViewManager : MonoBehaviour
 
     private void TogglePaused()
     {
-        if (!isPaused)
-        {
-            isPaused = true;
-            m_PauseMenu.SetActive(true);
-            m_recordingManager.PauseReplays();
-            m_thirdPersonCar.Paused(true);
-        }
-        else
-        {
-            isPaused = false;
-            m_PauseMenu.SetActive(false);
-            m_recordingManager.PlayReplays();
-            m_thirdPersonCar.Paused(false);
-        }
+        m_pauseMenu.SetActive(!m_pauseMenu.activeSelf);
+        Time.timeScale = Time.timeScale == 0 ? 1 : 0;
     }
 
     private void OnContinueClick()
@@ -194,6 +171,13 @@ public class RaceViewManager : MonoBehaviour
 
     private void OnExitClick()
     {
-        Debug.Log("Exit");
+        m_recordingManager.PauseReplays();
+        isRacing = false;
+        isInScene = false;
+        Time.timeScale = 1;
+
+        m_followCamera.SetFollowTarget(CarGameManager.Instance.FinishCameraTarget());
+
+        CarGameManager.Instance.GoToMainMenu();
     }
 }

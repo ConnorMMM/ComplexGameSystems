@@ -390,6 +390,13 @@ public class PrometeoCarController : MonoBehaviour
 
             }
         }
+        else
+        {
+            ThrottleOff();
+            InvokeRepeating("DecelerateCar", 0f, 0.1f);
+            deceleratingCar = true;
+            ResetSteeringAngle();
+        }
 
       // We call the method AnimateWheelMeshes() in order to match the wheel collider movements with the 3D meshes of the wheels.
       AnimateWheelMeshes();

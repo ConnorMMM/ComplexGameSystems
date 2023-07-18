@@ -64,7 +64,7 @@ public class ReplaySystem_UIManager : MonoBehaviour
         ResetReplayButtons();
 
         foreach (RecordingManager manager in m_recordingManagers)
-            manager.FinishRecording();
+            manager.StopRecording();
     }
 
     public void OnPlayReplayClick()

@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -12,11 +13,7 @@ public abstract class Recorder : MonoBehaviour
 
     private void OnDestroy()
     {
-        if(m_memoryStream != null)
-        {
-            m_memoryStream.Dispose();
-            m_binaryWriter.Dispose();
-        }
+        ClearMemory();
     }
 
     private void FixedUpdate()
@@ -62,17 +59,29 @@ public abstract class Recorder : MonoBehaviour
 
     public void PauseRecording()
     {
+        if (!recordingInitialized)
+            throw new InvalidOperationException("MemoryStream is not initialized");
+
         isPaused = true;
     }
 
     public void ContinueRecording()
     {
+        if (!recordingInitialized)
+            throw new InvalidOperationException("MemoryStream is not initialized");
+
         isPaused = false;
     }
 
     public void StopRecording()
     {
         recording = false;
+    }
+
+    public void ClearRecording()
+    {
+        StopRecording();
+        ClearMemory();
     }
 
     public MemoryStream GetMemoryStream()
@@ -152,5 +161,15 @@ public abstract class Recorder : MonoBehaviour
             m_binaryWriter.Write(true);
             SaveVector3(_cur - _prev);
         }
+    }
+
+    private void ClearMemory()
+    {
+        if (m_memoryStream != null)
+        {
+            m_memoryStream.Dispose();
+            m_binaryWriter.Dispose();
+        }
+        recordingInitialized = false;
     }
 }
